@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CM88 - Đăng Nhập & Đăng Ký</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background-color: #222;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* Khung giao diện Mobile */
+        .app-container {
+            width: 100%;
+            max-width: 430px;
+            min-height: 100vh;
+            /* Ảnh 3: Nền chính */
+            background: url('bg-main.png') no-repeat center center;
+            background-size: cover;
+            padding: 15px 20px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Ảnh 1: Nền casino mờ ở đáy */
+        .bg-bottom {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 270px;
+            background: url('bg-bottom.png') no-repeat bottom center;
+            background-size: cover;
+            opacity: 0.35;
+            /* Làm mờ viền trên của ảnh đáy để hòa vào nền */
+            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
+            mask-image: linear-gradient(to bottom, transparent 0%, black 35%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Đưa toàn bộ nội dung nổi lên trên lớp nền */
+        .content-wrap {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header & Ảnh 4: Logo CM88 */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 12px;
+            height: 36px;
+        }
+        .header .back-btn {
+            position: absolute;
+            left: 0;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .header .logo-img {
+            height: 30px;
+            object-fit: contain;
+        }
+
+        /* Ảnh 2: Banner */
+        .banner {
+            width: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 18px;
+        }
+        .banner img {
+            width: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Nút chuyển Tab (Đăng nhập / Đăng ký) */
+        .tab-switcher {
+            display: flex;
+            background-color: #707070;
+            border-radius: 30px;
+            height: 42px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: transparent;
+            color: #fff;
+            font-weight: bold;
+            font-size: 15px;
+            border-radius: 30px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background-color: #269a3c;
+        }
+        .badge-68k {
+            position: absolute;
+            top: -10px;
+            right: 55px;
+            background: #ff1a1a;
+            color: #ffff00;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* Ô nhập liệu (Input) */
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1.2px solid #399b49;
+            border-radius: 6px;
+            height: 44px;
+            padding: 0 12px;
+            margin-bottom: 14px;
+        }
+        .input-group i.prefix-icon {
+            color: #269a3c;
+            font-size: 18px;
+            width: 24px;
+        }
+        .input-group .req {
+            color: #e60000;
+            margin-right: 4px;
+            font-weight: bold;
+        }
+        .input-group input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+            background: transparent;
+        }
+        .input-group input::placeholder {
+            color: #b5b5b5;
+        }
+        .input-group .suffix-icon {
+            color: #b5b5b5;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .input-group .suffix-icon.green {
+            color: #269a3c;
+        }
+
+        /* Cờ +84 */
+        .phone-prefix {
+            display: flex;
+            align-items: center;
+            padding-right: 10px;
+            margin-right: 10px;
+            border-right: 1px solid #ddd;
+            color: #999;
+            font-size: 14px;
+        }
+        .vn-flag {
+            width: 20px;
+            height: 14px;
+            background-color: #da251d;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 6px;
+        }
+        .vn-flag::after {
+            content: "★";
+            color: #ffff00;
+            font-size: 10px;
+        }
+
+        /* Thông báo lỗi & Độ mạnh mật khẩu */
+        .error-msg {
+            color: #e60000;
+            font-size: 13px;
+            margin-top: -6px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .pwd-strength {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #444;
+            margin-top: -4px;
+            margin-bottom: 14px;
+        }
+        .pwd-bar {
+            width: 45px;
+            height: 7px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+        }
+
+        /* Chữ xanh dạ quang */
+        .glow-notice {
+            font-size: 12.5px;
+            color: #0066cc;
+            text-shadow: 0 0 6px #4da6ff, 0 0 10px #80bfff;
+            margin-top: -4px;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        /* Checkbox */
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            font-size: 12.5px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .custom-check {
+            width: 18px;
+            height: 18px;
+            background-color: #00b32c;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 12px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .checkbox-row a {
+            color: #269a3c;
+            text-decoration: none;
+        }
+
+        /* Nút Submit chính */
+        .submit-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .submit-btn {
+            width: 60%;
+            height: 42px;
+            background-color: #269a3c;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(38, 154, 60, 0.3);
+        }
+        .gift-badge {
+            position: absolute;
+            top: -16px;
+            right: 18%;
+            display: flex;
+            align-items: center;
+        }
+        .gift-badge .gift-icon {
+            font-size: 24px;
+        }
+        .gift-badge .plus-68k {
+            background: #ff1a1a;
+            color: #ffff00;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: -4px;
+        }
+
+        /* Links phụ (CSKH, Chơi thử...) */
+        .quick-links {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 15px;
+            margin-bottom: 22px;
+        }
+        .quick-links.two-links {
+            justify-content: space-around;
+        }
+        .quick-links a {
+            color: #269a3c;
+            font-size: 13.5px;
+            text-decoration: none;
+        }
+
+        /* Dòng kẻ phân cách */
+        .divider {
+            display: flex;
+            align-items: center;
+            color: #777;
+            font-size: 13.5px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #ccc;
+        }
+        .divider span {
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Đăng nhập nhanh (FaceID / Google) */
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 35px;
+            margin-bottom: 22px;
+        }
+        .social-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+        .social-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Nút Tải App */
+        .app-downloads {
+            display: flex;
+            gap: 12px;
+        }
+        .store-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #fff;
+            border: 1px solid #bce5c4;
+            border-radius: 8px;
+            height: 48px;
+            text-decoration: none;
+            color: #333;
+        }
+        .store-btn i {
+            font-size: 26px;
+        }
+        .store-text {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+        .store-text small {
+            font-size: 10px;
+            color: #555;
+            text-align: center;
+        }
+        .store-text strong {
+            font-size: 14px;
+            color: #222;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Ảnh 1: Hình nền Casino dưới đáy -->
+    <div class="bg-bottom"></div>
+
+    <div class="content-wrap">
+        <!-- Header & Ảnh 4: Logo CM88 -->
+        <div class="header">
+            <a href="#" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <img src="logo.png" alt="CM88" class="logo-img">
+        </div>
+
+        <!-- Ảnh 2: Banner -->
+        <div class="banner">
+            <img src="banner.png" alt="Chúc mừng sinh nhật CM88">
+        </div>
+
+        <!-- Thanh chuyển Tab -->
+        <div class="tab-switcher">
+            <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">ĐĂNG NHẬP</button>
+            <button class="tab-btn" id="tab-register" onclick="switchTab('register')">
+                ĐĂNG KÝ
+                <span class="badge-68k" id="top-badge">+68K</span>
+            </button>
+        </div>
+
+        <!-- ================= FORM ĐĂNG NHẬP ================= -->
+        <div id="form-login">
+            <div class="input-group">
+                <i class="fa-solid fa-user prefix-icon"></i>
+                <span class="req">*</span>
+                <input type="text" id="login-user" placeholder="Nhập Số điện thoại/Tên tài khoản">
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock prefix-icon"></i>
+                <span class="req">*</span>
+                <input type="password" id="login-pass" placeholder="Mật khẩu">
+                <i class="fa-regular fa-eye-slash suffix-icon"></i>
+            </div>
+
+            <div class="error-msg">
+                <i class="fa-solid fa-circle-exclamation"></i> Yêu cầu mật khẩu
+            </div>
+
+            <div class="checkbox-row">
+                <span class="custom-check"><i class="fa-solid fa-check"></i></span>
+                <span>Ghi nhớ tài khoản mật khẩu</span>
+            </div>
+
+            <div class="submit-wrapper">
+                <button class="submit-btn" onclick="submitLogin()">ĐĂNG NHẬP</button>
+            </div>
+
+            <div class="quick-links">
+                <a href="#">Liên Hệ CSKH</a>
+                <a href="#">Chơi Thử</a>
+                <a href="#">Quên Mật Khẩu</a>
+            </div>
+
+            <div class="divider">
+                <span>ĐĂNG NHẬP NHANH</span>
+            </div>
+
+            <div class="social-login">
+                <!-- Face ID SVG -->
+                <div class="social-item">
+                    <div class="social-icon-box" style="background: transparent; box-shadow: none;">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#269a3c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                            <path d="M9 9v1m6-1v1m-3-1v3h-1m-2 3.5c1.5 1.5 4.5 1.5 6 0"/>
+                        </svg>
+                    </div>
+                    <span>Face ID</span>
+                </div>
+
+                <!-- Google SVG -->
+                <div class="social-item">
+                    <div class="social-icon-box">
+                        <svg width="24" height="24" viewBox="0 0 48 48">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        </svg>
+                    </div>
+                    <span>Google</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= FORM ĐĂNG KÝ ================= -->
+        <div id="form-register" class="hidden">
+            <div class="input-group">
+                <i class="fa-solid fa-user prefix-icon"></i>
+                <span class="req">*</span>
+                <input type="text" id="reg-user" placeholder="Nhập Số điện thoại/Tên tài khoản">
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-lock prefix-icon"></i>
+                <span class="req">*</span>
+                <input type="password" id="reg-pass" placeholder="Nhập mật khẩu">
+                <i class="fa-solid fa-eye suffix-icon green"></i>
+            </div>
+
+            <div class="pwd-strength">
+                <span>Độ mạnh mật khẩu</span>
+                <span class="pwd-bar"></span>
+                <span class="pwd-bar"></span>
+                <span class="pwd-bar"></span>
+                <span class="pwd-bar"></span>
+            </div>
+
+            <div class="input-group">
+                <div class="phone-prefix">
+                    <span class="vn-flag"></span> +84
+                </div>
+                <span class="req">*</span>
+                <input type="tel" id="reg-phone" placeholder="Nhập SĐT">
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-user-check prefix-icon"></i>
+                <span class="req">*</span>
+                <input type="text" id="reg-fullname" placeholder="Vui lòng nhập Họ và Tên thật của bạn">
+            </div>
+
+            <div class="glow-notice">
+                Họ tên phải đúng với tên thẻ ngân hàng để rút tiền!
+            </div>
+
+            <div class="checkbox-row">
+                <span class="custom-check"><i class="fa-solid fa-check"></i></span>
+                <span>Tôi trên 18 tuổi, đã đọc và đồng ý với <a href="#">《Thỏa thuận đăng ký người dùng》</a></span>
+            </div>
+
+            <div class="submit-wrapper">
+                <div class="gift-badge">
+                    <span class="gift-icon">🎁</span>
+                    <span class="plus-68k">+68K</span>
+                </div>
+                <button class="submit-btn" onclick="submitRegister()">ĐĂNG KÝ</button>
+            </div>
+
+            <div class="quick-links two-links">
+                <a href="#">Liên Hệ CSKH</a>
+                <a href="#">Chơi Thử</a>
+            </div>
+
+            <div class="divider">
+                <span>ĐĂNG KÝ RÀNG BUỘC</span>
+            </div>
+
+            <div class="social-login">
+                <!-- Google SVG -->
+                <div class="social-item">
+                    <div class="social-icon-box">
+                        <svg width="24" height="24" viewBox="0 0 48 48">
+                            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                            <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                        </svg>
+                    </div>
+                    <span>Google</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= FOOTER TẢI APP (CHUNG) ================= -->
+        <div class="divider">
+            <span><i class="fa-solid fa-download"></i> TẢI APP</span>
+        </div>
+
+        <div class="app-downloads">
+            <a href="#" class="store-btn">
+                <i class="fa-brands fa-apple"></i>
+                <div class="store-text">
+                    <small>IOS</small>
+                    <strong>App Store</strong>
+                </div>
+            </a>
+            <a href="#" class="store-btn">
+                <!-- Google Play Color Icon -->
+                <svg width="24" height="24" viewBox="0 0 512 512">
+                    <path fill="#4caf50" d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1z"/>
+                    <path fill="#2196f3" d="M47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0z"/>
+                    <path fill="#ffeb3b" d="M472.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8z"/>
+                    <path fill="#f44336" d="M104.6 499l280.8-161.2-60.1-60.1L104.6 499z"/>
+                </svg>
+                <div class="store-text">
+                    <small>ANDROID</small>
+                    <strong>Google Play</strong>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(tab) {
+        const loginForm = document.getElementById('form-login');
+        const registerForm = document.getElementById('form-register');
+        const tabLogin = document.getElementById('tab-login');
+        const tabRegister = document.getElementById('tab-register');
+        const topBadge = document.getElementById('top-badge');
+
+        if (tab === 'login') {
+            loginForm.classList.remove('hidden');
+            registerForm.classList.add('hidden');
+            tabLogin.classList.add('active');
+            tabRegister.classList.remove('active');
+            topBadge.classList.remove('hidden');
+        } else {
+            loginForm.classList.add('hidden');
+            registerForm.classList.remove('hidden');
+            tabLogin.classList.remove('active');
+            tabRegister.classList.add('active');
+            topBadge.classList.add('hidden');
+        }
+    }
+
+    // ĐOẠN SCRIPT BẮT DỮ LIỆU BẰNG FETCH (KHÔNG LÀM LOAD LẠI TRANG LỆCH STYLE)
+    function submitLogin() {
+        const user = document.getElementById('login-user').value;
+        const pass = document.getElementById('login-pass').value;
+
+        if (!user || !pass) {
+            alert('Vui lòng nhập đầy đủ thông tin!');
+            return;
+        }
+
+        fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert('Mật khẩu hoặc tài khoản không chính xác!');
+        });
+    }
+
+    function submitRegister() {
+        const user = document.getElementById('reg-user').value;
+        const pass = document.getElementById('reg-pass').value;
+        const phone = document.getElementById('reg-phone').value;
+        const name = document.getElementById('reg-fullname').value;
+
+        if (!user || !pass || !phone || !name) {
+            alert('Vui lòng điền đầy đủ tất cả các trường!');
+            return;
+        }
+
+        fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: user, password: pass, phone: phone, fullname: name })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert('Đăng ký thất bại, hệ thống đang bảo trì!');
+        });
+    }
+</script>
+
+</body>
+</html>

