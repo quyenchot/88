@@ -14,7 +14,6 @@
             touch-action: manipulation;
         }
 
-        /* Khóa cứng body bằng 100vh để giữ form chuẩn */
         body {
             background-color: #ffffff;
             display: flex;
@@ -24,7 +23,6 @@
             overflow: hidden; 
         }
 
-        /* Nền tổng thể màu xanh ngọc nhạt */
         .app-container {
             width: 100%;
             max-width: 480px;
@@ -39,16 +37,15 @@
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
 
-        /* --- 1. PHẦN TRÊN GHI CHẾT (Logo, Banner, Tabs) --- */
         .fixed-top-section {
             padding: 15px 20px 0 20px;
             flex-shrink: 0;
         }
 
-        /* --- 2. PHẦN DƯỚI CUỘN ĐỘC LẬP (Form, Tải App) --- */
         .scrollable-form-section {
             flex: 1;
             overflow-y: auto;
+            overflow-x: hidden; 
             -webkit-overflow-scrolling: touch;
             padding: 10px 20px 0 20px;
             scrollbar-width: none;
@@ -57,10 +54,9 @@
             display: none;
         }
 
-        /* --- Khối Máy quay TRÀN VIỀN nhờ bù trừ padding --- */
         .bottom-machine-bg {
-            width: calc(100% + 40px); /* Bù lại padding 20px hai bên của form */
-            margin-left: -20px;       /* Kéo giãn sang trái */
+            width: calc(100% + 40px);
+            margin-left: -20px;
             height: 380px;
             background: url('bg-bottom.png') no-repeat bottom center;
             background-size: 100% auto;
@@ -102,8 +98,14 @@
         .pwd-bars { display: flex; gap: 4px; }
         .pwd-bar { width: 40px; height: 6px; background-color: #e0e0e0; border-radius: 3px; transition: 0.3s; }
         
-        /* Thay thế text glow notice bằng class cho ảnh */
-        .glow-notice-img { width: 100%; max-width: 380px; margin: 5px auto 15px auto; display: block; object-fit: contain; }
+        /* ĐÃ SỬA CHUẨN: Giữ nguyên tỷ lệ gốc, hiển thị to rõ rành mạch */
+        .glow-notice-img { 
+            display: block; 
+            width: 100%; 
+            height: auto; 
+            margin: 4px 0 14px 0; 
+            object-fit: contain; 
+        }
 
         .checkbox-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #555; margin-bottom: 18px; line-height: 1.4; cursor: pointer; }
         .custom-check { width: 18px; height: 18px; border: 2px solid #ccc; background-color: #fff; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; color: transparent; font-size: 12px; flex-shrink: 0; transition: 0.2s; }
@@ -198,7 +200,6 @@
             </div>
             <div class="divider"><span>ĐĂNG NHẬP NHANH</span></div>
             
-            <!-- Thêm trọn bộ 2 nút Face ID và Google -->
             <div class="social-login">
                 <div class="social-item">
                     <div class="social-icon-box" style="background: transparent; box-shadow: none;">
@@ -253,7 +254,7 @@
 
             <div class="input-group" id="group-reg-phone">
                 <div class="phone-prefix"><span class="vn-flag"></span> +84</div><span class="req">*</span>
-                <input type="tel" id="reg-phone" placeholder="Nhập SĐT (Bỏ số 0 đầu)" oninput="checkInput('reg-phone')" onblur="validateField('reg-phone')">
+                <input type="tel" id="reg-phone" placeholder="Nhập SĐT " oninput="checkInput('reg-phone')" onblur="validateField('reg-phone')">
                 <div class="icon-actions">
                     <i class="fa-solid fa-circle-xmark hidden" id="clear-reg-phone" onclick="clearField('reg-phone')"></i>
                 </div>
@@ -269,7 +270,7 @@
             </div>
             <div class="error-msg" id="err-reg-fullname"><i class="fa-solid fa-circle-exclamation"></i> <span>Họ tên không được để trống</span></div>
             
-            <!-- Đổi thẻ text thành file ảnh apng mày gửi -->
+            <!-- Ảnh nhấp nháy chuẩn kích thước gốc -->
             <img src="apng_dlzc_tsy_vi_0330.webp" alt="Lưu ý: Họ tên phải đúng với tên thẻ ngân hàng để rút tiền!" class="glow-notice-img">
 
             <div class="checkbox-row checked" id="reg-agree-box" onclick="toggleCheckbox(this)">
@@ -303,7 +304,6 @@
             </a>
         </div>
 
-        <!-- Khối chứa cái ảnh Máy quay TRÀN VIỀN -->
         <div class="bottom-machine-bg"></div>
     </div>
 </div>
